@@ -130,6 +130,23 @@
             line-height: 1.45;
             color: #777;
         }
+
+        /* Safari text-size compensation */
+        .is-safari .title {
+            font-size: 30px;
+        }
+
+        .is-safari .subtitle {
+            font-size: 15px;
+        }
+
+        .is-safari .column-title {
+            font-size: 14px;
+        }
+
+        .is-safari .site-item a {
+            font-size: 16px;
+        }
     </style>
 </head>
 
@@ -280,6 +297,16 @@
             </article>
         </section>
     </main>
+
+    <script>
+        (function () {
+            var ua = navigator.userAgent.toLowerCase();
+            var isSafari = ua.indexOf("safari") > -1 && ua.indexOf("chrome") === -1 && ua.indexOf("chromium") === -1;
+            if (isSafari) {
+                document.documentElement.classList.add("is-safari");
+            }
+        })();
+    </script>
 </body>
 
 </html>
