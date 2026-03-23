@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design Reference Directory</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+            background: #fff;
+            color: #111;
+            min-width: 1280px;
+            overflow-x: hidden;
+        }
+
+        .page {
+            padding: 40px 44px 64px;
+        }
+
+        .header {
+            margin-bottom: 44px;
+        }
+
+        .title {
+            font-size: 25px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 760px;
+            color: #444;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(200px, 1fr));
+            gap: 34px;
+            align-items: start;
+        }
+
+        .sub-board {
+            margin-top: 56px;
+            display: grid;
+            grid-template-columns: repeat(5, minmax(200px, 1fr));
+            gap: 34px;
+            align-items: start;
+        }
+
+        .column {
+            min-width: 0;
+        }
+
+        .column-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #111;
+        }
+
+        .site-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .site-item a {
+            display: inline;
+            font-size: 14px;
+            line-height: 1.45;
+            color: #111;
+            text-decoration: none;
+        }
+
+        .site-line {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 5px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            transform: translateY(-0.5px);
+        }
+
+        .badge-icon {
+            font-size: 8px;
+            line-height: 1;
+            color: #222;
+        }
+
+        .site-item a:hover,
+        .site-item a:focus-visible {
+            text-decoration: underline;
+        }
+
+        .placeholder {
+            font-size: 12px;
+            line-height: 1.45;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+        <header class="header">
+            <h1 class="title">레퍼런스 사이트 모음집</h1>
+            <p class="subtitle">카테고리별로 정리된 디자인 레퍼런스 사이트</p>
+        </header>
+
+        <section class="board">
+            <article class="column">
+                <h2 class="column-title">타이포그래피</h2>
+                <ul class="site-list">
+                    <li class="site-item"><a href="https://fontsinuse.com/" target="_blank"
+                            rel="noopener noreferrer">Fonts In Use</a></li>
+                    <li class="site-item"><a href="https://www.typewolf.com/" target="_blank"
+                            rel="noopener noreferrer">Typewolf</a></li>
+                    <li class="site-item">
+                        <div class="site-line">
+                            <a href="https://typeverything.com/" target="_blank"
+                                rel="noopener noreferrer">Typeverything</a>
+                            <span class="badge" aria-label="수업 언급"><span class="badge-icon">◆</span></span>
+                        </div>
+                    </li>
+                    <li class="site-item"><a href="https://www.typographicposters.com/" target="_blank"
+                            rel="noopener noreferrer">Typographic Posters</a></li>
+                </ul>
+            </article>
+
+            <article class="column">
+                <h2 class="column-title">UI</h2>
+                <ul class="site-list">
+                    <li class="site-item"><a href="https://collectui.com/" target="_blank"
+                            rel="noopener noreferrer">Collect UI</a></li>
+                    <li class="site-item"><a href="https://dribbble.com/" target="_blank"
+                            rel="noopener noreferrer">Dribbble</a></li>
+                    <li class="site-item"><a href="https://refero.design/" target="_blank"
+                            rel="noopener noreferrer">Refero</a></li>
+                    <li class="site-item"><a href="https://godly.website/" target="_blank"
+                            rel="noopener noreferrer">Godly</a></li>
+                </ul>
+            </article>
+
+            <article class="column">
+                <h2 class="column-title">브랜딩</h2>
+                <ul class="site-list">
+                    <li class="site-item"><a href="https://bpando.org/" target="_blank"
+                            rel="noopener noreferrer">BP&amp;O</a></li>
+                    <li class="site-item"><a href="https://brenden.kr/" target="_blank"
+                            rel="noopener noreferrer">Brenden</a></li>
+                    <li class="site-item"><a href="https://studiofnt.com/" target="_blank"
+                            rel="noopener noreferrer">Studio fnt</a></li>
+                    <li class="site-item"><a href="https://www.pentagram.com/work" target="_blank"
+                            rel="noopener noreferrer">Pentagram</a></li>
+                </ul>
+            </article>
+
+            <article class="column">
+                <h2 class="column-title">비주얼 레퍼런스</h2>
+                <ul class="site-list">
+                    <li class="site-item"><a href="https://www.pinterest.com/" target="_blank"
+                            rel="noopener noreferrer">Pinterest</a></li>
+                    <li class="site-item">
+                        <div class="site-line">
+                            <a href="https://www.cosmos.so/" target="_blank" rel="noopener noreferrer">Cosmos</a>
+                            <span class="badge" aria-label="수업 언급"><span class="badge-icon">◆</span></span>
+                        </div>
+                    </li>
+                    <li class="site-item"><a href="https://www.designspiration.com/" target="_blank"
+                            rel="noopener noreferrer">Designspiration</a></li>
+                </ul>
+            </article>
+
+            <article class="column">
+                <h2 class="column-title">모션</h2>
+                <ul class="site-list">
+                    <li class="site-item"><a href="https://eycndy.com/" target="_blank"
+                            rel="noopener noreferrer">Eyecandy</a></li>
+                    <li class="site-item"><a href="https://motionographer.com/" target="_blank"
+                            rel="noopener noreferrer">Motionographer</a></li>
+                </ul>
+            </article>
+        </section>
+
+        <section class="sub-board">
+            <article class="column">
+                <h2 class="column-title">X 계정</h2>
+                <ul class="site-list">
+                    <li class="site-item"><a href="https://x.com/piecexxcake" target="_blank"
+                            rel="noopener noreferrer">@piecexxcake</a></li>
+                    <li class="site-item"><a href="https://x.com/tiaaaooow" target="_blank"
+                            rel="noopener noreferrer">@tiaaaooow</a></li>
+                    <li class="site-item"><a href="https://x.com/0young1ill" target="_blank"
+                            rel="noopener noreferrer">@0young1ill</a></li>
+                    <li class="site-item"><a href="https://x.com/in_the__pool" target="_blank"
+                            rel="noopener noreferrer">@in_the__pool</a></li>
+                    <li class="site-item"><a href="https://x.com/b_oooookiee" target="_blank"
+                            rel="noopener noreferrer">@b_oooookiee</a></li>
+                    <li class="site-item"><a href="https://x.com/soojonamu" target="_blank"
+                            rel="noopener noreferrer">@soojonamu</a></li>
+                </ul>
+            </article>
+        </section>
+    </main>
+</body>
+
+</html>
