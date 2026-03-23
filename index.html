@@ -133,19 +133,19 @@
 
         /* Safari text-size compensation */
         .is-safari .title {
-            font-size: 30px;
+            font-size: 32px;
         }
 
         .is-safari .subtitle {
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .is-safari .column-title {
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .is-safari .site-item a {
-            font-size: 16px;
+            font-size: 17px;
         }
     </style>
 </head>
@@ -301,9 +301,16 @@
     <script>
         (function () {
             var ua = navigator.userAgent.toLowerCase();
-            var isSafari = ua.indexOf("safari") > -1 && ua.indexOf("chrome") === -1 && ua.indexOf("chromium") === -1;
+            var isSafari = ua.indexOf("safari") > -1
+                && ua.indexOf("chrome") === -1
+                && ua.indexOf("chromium") === -1
+                && ua.indexOf("crios") === -1
+                && ua.indexOf("fxios") === -1
+                && ua.indexOf("edgios") === -1
+                && ua.indexOf("opr") === -1;
             if (isSafari) {
                 document.documentElement.classList.add("is-safari");
+                document.body.classList.add("is-safari");
             }
         })();
     </script>
