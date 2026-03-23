@@ -29,17 +29,29 @@
         }
 
         .title {
-            font-size: 25px;
+            font-size: 28px;
             font-weight: 700;
             letter-spacing: 0.02em;
             margin-bottom: 12px;
         }
 
         .subtitle {
-            font-size: 13px;
+            font-size: 14px;
             line-height: 1.6;
             max-width: 760px;
             color: #444;
+            margin-bottom: 10px;
+        }
+
+        .legend {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .legend-item {
+            display: inline-block;
+            margin-right: 16px;
         }
 
         .board {
@@ -62,7 +74,7 @@
         }
 
         .column-title {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -80,34 +92,37 @@
 
         .site-item a {
             display: inline;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.45;
             color: #111;
             text-decoration: none;
         }
 
-        .site-line {
-            display: inline-flex;
-            align-items: baseline;
-            gap: 5px;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            white-space: nowrap;
-            transform: translateY(-0.5px);
-        }
-
-        .badge-icon {
-            font-size: 8px;
-            line-height: 1;
-            color: #222;
-        }
-
         .site-item a:hover,
         .site-item a:focus-visible {
             text-decoration: underline;
+        }
+
+        .hl-idea {
+            background-image: linear-gradient(
+                transparent 34%,
+                rgba(255, 255, 0, 0.7) 34%,
+                rgba(255, 255, 0, 0.7) 82%,
+                transparent 82%
+            );
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
+        }
+
+        .hl-build {
+            background-image: linear-gradient(
+                transparent 34%,
+                rgba(57, 255, 20, 0.65) 34%,
+                rgba(57, 255, 20, 0.65) 82%,
+                transparent 82%
+            );
+            -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
         }
 
         .placeholder {
@@ -123,23 +138,22 @@
         <header class="header">
             <h1 class="title">레퍼런스 사이트 모음집</h1>
             <p class="subtitle">카테고리별로 정리된 디자인 레퍼런스 사이트</p>
+            <p class="legend">
+                <span class="legend-item"><span class="hl-idea">초기 컨셉 구상</span></span>
+                <span class="legend-item"><span class="hl-build">논리적인 구조 설계</span></span>
+            </p>
         </header>
 
         <section class="board">
             <article class="column">
                 <h2 class="column-title">타이포그래피</h2>
                 <ul class="site-list">
-                    <li class="site-item"><a href="https://fontsinuse.com/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://fontsinuse.com/" target="_blank"
                             rel="noopener noreferrer">Fonts In Use</a></li>
                     <li class="site-item"><a href="https://www.typewolf.com/" target="_blank"
                             rel="noopener noreferrer">Typewolf</a></li>
-                    <li class="site-item">
-                        <div class="site-line">
-                            <a href="https://typeverything.com/" target="_blank"
-                                rel="noopener noreferrer">Typeverything</a>
-                            <span class="badge" aria-label="수업 언급"><span class="badge-icon">◆</span></span>
-                        </div>
-                    </li>
+                    <li class="site-item"><a href="https://typeverything.com/" target="_blank"
+                            rel="noopener noreferrer">Typeverything</a></li>
                     <li class="site-item"><a href="https://www.typographicposters.com/" target="_blank"
                             rel="noopener noreferrer">Typographic Posters</a></li>
                     <li class="site-item"><a href="https://fonts.google.com/" target="_blank"
@@ -162,11 +176,11 @@
                             rel="noopener noreferrer">Collect UI</a></li>
                     <li class="site-item"><a href="https://dribbble.com/" target="_blank"
                             rel="noopener noreferrer">Dribbble</a></li>
-                    <li class="site-item"><a href="https://refero.design/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://refero.design/" target="_blank"
                             rel="noopener noreferrer">Refero</a></li>
                     <li class="site-item"><a href="https://godly.website/" target="_blank"
                             rel="noopener noreferrer">Godly</a></li>
-                    <li class="site-item"><a href="https://mobbin.com/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://mobbin.com/" target="_blank"
                             rel="noopener noreferrer">Mobbin</a></li>
                     <li class="site-item"><a href="https://www.pttrns.com/" target="_blank"
                             rel="noopener noreferrer">Pttrns</a></li>
@@ -182,15 +196,15 @@
             <article class="column">
                 <h2 class="column-title">브랜딩</h2>
                 <ul class="site-list">
-                    <li class="site-item"><a href="https://bpando.org/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://bpando.org/" target="_blank"
                             rel="noopener noreferrer">BP&amp;O</a></li>
                     <li class="site-item"><a href="https://brenden.kr/" target="_blank"
                             rel="noopener noreferrer">Brenden</a></li>
                     <li class="site-item"><a href="https://studiofnt.com/" target="_blank"
                             rel="noopener noreferrer">Studio fnt</a></li>
-                    <li class="site-item"><a href="https://www.pentagram.com/work" target="_blank"
+                    <li class="site-item"><a class="hl-idea" href="https://www.pentagram.com/work" target="_blank"
                             rel="noopener noreferrer">Pentagram</a></li>
-                    <li class="site-item"><a href="https://www.underconsideration.com/brandnew/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://www.underconsideration.com/brandnew/" target="_blank"
                             rel="noopener noreferrer">Brand New</a></li>
                     <li class="site-item"><a href="https://the-brandidentity.com/" target="_blank"
                             rel="noopener noreferrer">The Brand Identity</a></li>
@@ -206,21 +220,17 @@
             <article class="column">
                 <h2 class="column-title">비주얼 레퍼런스</h2>
                 <ul class="site-list">
-                    <li class="site-item"><a href="https://www.pinterest.com/" target="_blank"
+                    <li class="site-item"><a class="hl-idea" href="https://www.pinterest.com/" target="_blank"
                             rel="noopener noreferrer">Pinterest</a></li>
-                    <li class="site-item">
-                        <div class="site-line">
-                            <a href="https://www.cosmos.so/" target="_blank" rel="noopener noreferrer">Cosmos</a>
-                            <span class="badge" aria-label="수업 언급"><span class="badge-icon">◆</span></span>
-                        </div>
-                    </li>
+                    <li class="site-item"><a class="hl-idea" href="https://www.cosmos.so/" target="_blank"
+                            rel="noopener noreferrer">Cosmos</a></li>
                     <li class="site-item"><a href="https://www.designspiration.com/" target="_blank"
                             rel="noopener noreferrer">Designspiration</a></li>
                     <li class="site-item"><a href="https://www.behance.net/" target="_blank"
                             rel="noopener noreferrer">Behance</a></li>
                     <li class="site-item"><a href="https://www.awwwards.com/" target="_blank"
                             rel="noopener noreferrer">Awwwards</a></li>
-                    <li class="site-item"><a href="https://www.siteinspire.com/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://www.siteinspire.com/" target="_blank"
                             rel="noopener noreferrer">SiteInspire</a></li>
                     <li class="site-item"><a href="https://search.muz.li/" target="_blank"
                             rel="noopener noreferrer">Muzli Search</a></li>
@@ -234,15 +244,15 @@
                 <ul class="site-list">
                     <li class="site-item"><a href="https://eycndy.com/" target="_blank"
                             rel="noopener noreferrer">Eyecandy</a></li>
-                    <li class="site-item"><a href="https://motionographer.com/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://motionographer.com/" target="_blank"
                             rel="noopener noreferrer">Motionographer</a></li>
-                    <li class="site-item"><a href="https://www.stashmedia.tv/" target="_blank"
+                    <li class="site-item"><a class="hl-idea" href="https://www.stashmedia.tv/" target="_blank"
                             rel="noopener noreferrer">Stash</a></li>
                     <li class="site-item"><a href="https://www.artofthetitle.com/" target="_blank"
                             rel="noopener noreferrer">Art of the Title</a></li>
                     <li class="site-item"><a href="https://vimeo.com/channels/staffpicks" target="_blank"
                             rel="noopener noreferrer">Vimeo Staff Picks</a></li>
-                    <li class="site-item"><a href="https://lottiefiles.com/" target="_blank"
+                    <li class="site-item"><a class="hl-build" href="https://lottiefiles.com/" target="_blank"
                             rel="noopener noreferrer">LottieFiles</a></li>
                     <li class="site-item"><a href="https://dribbble.com/tags/animation" target="_blank"
                             rel="noopener noreferrer">Dribbble Animation</a></li>
