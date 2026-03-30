@@ -34,7 +34,7 @@
         }
 
         .page {
-            width: min(1160px, 100% - 36px);
+            width: min(1360px, 100% - 48px);
             margin: 0 auto;
             padding: 40px 0 80px;
         }
@@ -44,7 +44,7 @@
         }
 
         .title {
-            font-size: clamp(24px, 3.2vw, 38px);
+            font-size: clamp(28px, 3.8vw, 46px);
             line-height: 1.08;
             letter-spacing: -0.02em;
             margin-bottom: 10px;
@@ -54,7 +54,7 @@
         .subtitle {
             max-width: 780px;
             color: var(--muted);
-            font-size: clamp(13px, 1.4vw, 15px);
+            font-size: clamp(14px, 1.6vw, 17px);
             line-height: 1.6;
         }
 
@@ -81,15 +81,15 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 52px;
+            width: 24px;
             height: 100%;
             pointer-events: none;
-            background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 78%);
+            background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 92%);
         }
 
         .cards {
-            --card-width: 320px;
-            --peek: 72px;
+            --card-width: 360px;
+            --peek: 96px;
             display: flex;
             gap: 18px;
             overflow-x: auto;
@@ -135,7 +135,7 @@
 
         .thumb-wrap {
             position: relative;
-            height: 176px;
+            height: 196px;
             background: #f6f9ff;
             overflow: hidden;
         }
@@ -240,6 +240,22 @@
             line-height: 1.1;
         }
 
+        .is-safari .site-name {
+            font-size: 18px;
+        }
+
+        .is-safari .desc {
+            font-size: 14px;
+        }
+
+        .is-safari .tag {
+            font-size: 13px;
+        }
+
+        .is-safari .context {
+            font-size: 12px;
+        }
+
         @media (max-width: 720px) {
             .page {
                 width: calc(100% - 24px);
@@ -253,11 +269,11 @@
             }
 
             .slider-wrap::after {
-                width: 26px;
+                width: 14px;
             }
 
             .thumb-wrap {
-                height: 190px;
+                height: 186px;
             }
         }
     </style>
@@ -465,7 +481,22 @@
 
         const getPreviewUrl = (url) => `https://image.thum.io/get/width/900/noanimate/${encodeURIComponent(url)}`;
 
-        const renderCard = (item) => {
+        (() => {
+            const ua = navigator.userAgent.toLowerCase();
+            const isSafari = ua.includes("safari")
+                && !ua.includes("chrome")
+                && !ua.includes("chromium")
+                && !ua.includes("crios")
+                && !ua.includes("fxios")
+                && !ua.includes("edgios")
+                && !ua.includes("opr");
+            if (isSafari) {
+                document.documentElement.classList.add("is-safari");
+                document.body.classList.add("is-safari");
+            }
+        })();
+
+        const renderCard = (item, index) => {
             const article = document.createElement("a");
             article.className = "card";
             article.href = item.url;
@@ -474,6 +505,8 @@
             article.setAttribute("aria-label", `${item.name} 사이트 열기`);
 
             const previewSrc = item.image || getPreviewUrl(item.url);
+            const loadingMode = index < 2 ? "eager" : "lazy";
+            const fetchPriority = index < 2 ? "high" : "auto";
             const tags = item.tags.map((tag) => `<li class=\"tag\">${tag}</li>`).join("");
             const badgeClass = item.badge === "HOT"
                 ? "context-hot"
@@ -484,7 +517,7 @@
 
             article.innerHTML = `
                 <div class="thumb-wrap">
-                    <img class="thumb" src="${previewSrc}" alt="${item.name} 미리보기 이미지" loading="lazy" referrerpolicy="no-referrer" />
+                    <img class="thumb" src="${previewSrc}" alt="${item.name} 미리보기 이미지" loading="${loadingMode}" fetchpriority="${fetchPriority}" referrerpolicy="no-referrer" />
                     <div class="thumb-fallback">미리보기 이미지</div>
                 </div>
                 <div class="card-body">
@@ -507,8 +540,8 @@
 
         Object.entries(groups).forEach(([targetId, items]) => {
             const container = document.getElementById(targetId);
-            items.forEach((item) => {
-                container.appendChild(renderCard(item));
+            items.forEach((item, index) => {
+                container.appendChild(renderCard(item, index));
             });
         });
     </script>
