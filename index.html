@@ -59,14 +59,14 @@
         }
 
         .section {
-            margin-top: 34px;
+            margin-top: 48px;
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 16px;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             color: #5f636b;
             border-top: 2px solid #e2e4e8;
             padding-top: 10px;
@@ -74,6 +74,7 @@
 
         .slider-wrap {
             position: relative;
+            padding: 0 16px;
         }
 
         .slider-wrap::after {
@@ -109,6 +110,69 @@
 
         .cards::-webkit-scrollbar {
             display: none;
+        }
+
+        .slider-nav {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #d8dde6;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.92);
+            color: #8a8f98;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
+            position: absolute;
+            top: 40%;
+            transform: translateY(-50%);
+            z-index: 3;
+        }
+
+        .nav-btn:hover {
+            color: #5e636d;
+            background: #ffffff;
+            border-color: #bfc7d6;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+
+        .nav-prev {
+            left: -34px;
+        }
+
+        .nav-next {
+            right: -34px;
+        }
+
+        .nav-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .nav-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #c7c9ce;
+            display: inline-block;
+            transition: transform 0.16s ease, background-color 0.16s ease;
+        }
+
+        .nav-dot.active {
+            background: #2b86ea;
+            transform: scale(1.08);
         }
 
         .card {
@@ -275,6 +339,21 @@
             .thumb-wrap {
                 height: 186px;
             }
+
+            .nav-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 17px;
+            }
+
+            .nav-prev {
+                left: -16px;
+            }
+
+            .nav-next {
+                right: -16px;
+            }
+
         }
     </style>
 </head>
@@ -289,35 +368,60 @@
         <section class="section">
             <h2 class="section-title">Visual Reference</h2>
             <div class="slider-wrap">
+                <button class="nav-btn nav-prev" type="button" aria-label="Previous slide">&lt;</button>
                 <div class="cards cols-3" id="cards-visual"></div>
+                <div class="slider-nav">
+                    <span class="nav-dots"><i class="nav-dot active"></i><i class="nav-dot"></i><i class="nav-dot"></i></span>
+                </div>
+                <button class="nav-btn nav-next" type="button" aria-label="Next slide">&gt;</button>
             </div>
         </section>
 
         <section class="section">
             <h2 class="section-title">UI</h2>
             <div class="slider-wrap">
+                <button class="nav-btn nav-prev" type="button" aria-label="Previous slide">&lt;</button>
                 <div class="cards cols-2" id="cards-ui"></div>
+                <div class="slider-nav">
+                    <span class="nav-dots"><i class="nav-dot active"></i><i class="nav-dot"></i><i class="nav-dot"></i></span>
+                </div>
+                <button class="nav-btn nav-next" type="button" aria-label="Next slide">&gt;</button>
             </div>
         </section>
 
         <section class="section">
             <h2 class="section-title">Typography</h2>
             <div class="slider-wrap">
+                <button class="nav-btn nav-prev" type="button" aria-label="Previous slide">&lt;</button>
                 <div class="cards cols-3" id="cards-type"></div>
+                <div class="slider-nav">
+                    <span class="nav-dots"><i class="nav-dot active"></i><i class="nav-dot"></i><i class="nav-dot"></i></span>
+                </div>
+                <button class="nav-btn nav-next" type="button" aria-label="Next slide">&gt;</button>
             </div>
         </section>
 
         <section class="section">
             <h2 class="section-title">Branding</h2>
             <div class="slider-wrap">
+                <button class="nav-btn nav-prev" type="button" aria-label="Previous slide">&lt;</button>
                 <div class="cards cols-2" id="cards-branding"></div>
+                <div class="slider-nav">
+                    <span class="nav-dots"><i class="nav-dot active"></i><i class="nav-dot"></i><i class="nav-dot"></i></span>
+                </div>
+                <button class="nav-btn nav-next" type="button" aria-label="Next slide">&gt;</button>
             </div>
         </section>
 
         <section class="section">
             <h2 class="section-title">Motion</h2>
             <div class="slider-wrap">
+                <button class="nav-btn nav-prev" type="button" aria-label="Previous slide">&lt;</button>
                 <div class="cards cols-2" id="cards-motion"></div>
+                <div class="slider-nav">
+                    <span class="nav-dots"><i class="nav-dot active"></i><i class="nav-dot"></i><i class="nav-dot"></i></span>
+                </div>
+                <button class="nav-btn nav-next" type="button" aria-label="Next slide">&gt;</button>
             </div>
         </section>
     </main>
@@ -369,7 +473,7 @@
                     badge: "NEW",
                     image: "images/collect-ui.jpg",
                     description: "160가지가 넘는 카테고리로 분류한 웹화면 ui를 모아둔 사이트입니다.",
-                    tags: ["#UI", "#카테고리", "#아이데이션"]
+                    tags: ["#UI", "#카테고리", "#다양한종류"]
                 },
                 {
                     name: "Godly",
@@ -544,6 +648,46 @@
                 container.appendChild(renderCard(item, index));
             });
         });
+
+        const setupSliderNav = () => {
+            const wraps = document.querySelectorAll(".slider-wrap");
+            wraps.forEach((wrap) => {
+                const scroller = wrap.querySelector(".cards");
+                const prev = wrap.querySelector(".nav-prev");
+                const next = wrap.querySelector(".nav-next");
+                const dots = Array.from(wrap.querySelectorAll(".nav-dot"));
+                if (!scroller || !prev || !next || dots.length === 0) return;
+
+                const getStep = () => {
+                    const firstCard = scroller.querySelector(".card");
+                    if (!firstCard) return 320;
+                    const gap = parseFloat(getComputedStyle(scroller).columnGap || getComputedStyle(scroller).gap || "18");
+                    return firstCard.getBoundingClientRect().width + gap;
+                };
+
+                const update = () => {
+                    const max = Math.max(1, scroller.scrollWidth - scroller.clientWidth);
+                    const ratio = scroller.scrollLeft / max;
+                    const index = Math.min(dots.length - 1, Math.round(ratio * (dots.length - 1)));
+                    dots.forEach((dot, i) => dot.classList.toggle("active", i === index));
+                    prev.disabled = scroller.scrollLeft <= 2;
+                    next.disabled = scroller.scrollLeft >= max - 2;
+                };
+
+                prev.addEventListener("click", () => {
+                    scroller.scrollBy({ left: -getStep(), behavior: "smooth" });
+                });
+                next.addEventListener("click", () => {
+                    scroller.scrollBy({ left: getStep(), behavior: "smooth" });
+                });
+                scroller.addEventListener("scroll", update, { passive: true });
+                window.addEventListener("resize", update);
+                update();
+            });
+        };
+
+        setupSliderNav();
+
     </script>
 </body>
 
