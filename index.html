@@ -600,7 +600,7 @@
             }
         })();
 
-        const renderCard = (item, index) => {
+        const renderCard = (item, index, groupIndex) => {
             const article = document.createElement("a");
             article.className = "card";
             article.href = item.url;
@@ -609,8 +609,9 @@
             article.setAttribute("aria-label", `${item.name} 사이트 열기`);
 
             const previewSrc = item.image || getPreviewUrl(item.url);
-            const loadingMode = index < 2 ? "eager" : "lazy";
-            const fetchPriority = index < 2 ? "high" : "auto";
+            const isPriorityCard = groupIndex === 0 && index === 0;
+            const loadingMode = isPriorityCard ? "eager" : "lazy";
+            const fetchPriority = isPriorityCard ? "high" : "auto";
             const tags = item.tags.map((tag) => `<li class=\"tag\">${tag}</li>`).join("");
             const badgeClass = item.badge === "HOT"
                 ? "context-hot"
@@ -621,7 +622,7 @@
 
             article.innerHTML = `
                 <div class="thumb-wrap">
-                    <img class="thumb" src="${previewSrc}" alt="${item.name} 미리보기 이미지" loading="${loadingMode}" fetchpriority="${fetchPriority}" referrerpolicy="no-referrer" />
+                    <img class="thumb" src="${previewSrc}" alt="${item.name} 미리보기 이미지" loading="${loadingMode}" fetchpriority="${fetchPriority}" decoding="async" referrerpolicy="no-referrer" />
                     <div class="thumb-fallback">미리보기 이미지</div>
                 </div>
                 <div class="card-body">
@@ -642,10 +643,10 @@
             return article;
         };
 
-        Object.entries(groups).forEach(([targetId, items]) => {
+        Object.entries(groups).forEach(([targetId, items], groupIndex) => {
             const container = document.getElementById(targetId);
             items.forEach((item, index) => {
-                container.appendChild(renderCard(item, index));
+                container.appendChild(renderCard(item, index, groupIndex));
             });
         });
 
