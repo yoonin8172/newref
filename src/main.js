@@ -3,7 +3,6 @@ const groups = {
     {
       name: "Font In Use",
       url: "https://fontsinuse.com/",
-      badge: "HOT",
       image: "images/font-in-use.jpg",
       description: "실사례를 보면서 인쇄물과 디지털 톤을 함께 참고하기 좋습니다.",
       tags: ["#인쇄물", "#실사례", "#에디토리얼"],
@@ -41,7 +40,6 @@ const groups = {
     {
       name: "Collect UI",
       url: "https://collectui.com/",
-      badge: "NEW",
       image: "images/collect-ui.jpg",
       description: "160가지가 넘는 카테고리로 분류한 웹화면 ui를 모아둔 사이트입니다.",
       tags: ["#UI", "#카테고리", "#다양한종류"],
@@ -102,7 +100,6 @@ const groups = {
     {
       name: "Cosmos",
       url: "https://www.cosmos.so/",
-      badge: "HOT",
       image: "images/cosmos.jpg",
       description: "취향 기반 큐레이션으로 레퍼런스를 확장하기 좋습니다.",
       tags: ["#큐레이션", "#연결탐색", "#감도높은"],
@@ -154,7 +151,118 @@ const groups = {
   ],
 };
 
+const GROUP_IDS = Object.keys(groups);
+const GROUP_INDEX = GROUP_IDS.reduce((acc, id, index) => {
+  acc[id] = index;
+  return acc;
+}, {});
+const STORAGE_KEY = "user-reference-sites-v1";
+const DELETED_BASE_KEY = "deleted-base-reference-cards-v1";
+const ORDER_KEY = "reference-card-order-v1";
+
 const getPreviewUrl = (url) => `https://image.thum.io/get/width/900/noanimate/${encodeURIComponent(url)}`;
+
+const escapeHtml = (value) =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+
+const toTagList = (rawTags) => {
+  if (!rawTags) return [];
+  return rawTags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .slice(0, 5)
+    .map((tag) => (tag.startsWith("#") ? tag : `#${tag}`));
+};
+
+const normalizeUrl = (rawUrl) => {
+  const input = String(rawUrl || "").trim();
+  if (!input) return null;
+  const withProtocol = /^https?:\/\//i.test(input) ? input : `https://${input}`;
+
+  try {
+    return new URL(withProtocol).href;
+  } catch {
+    return null;
+  }
+};
+
+const readImageFileAsDataUrl = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("failed-to-read-image"));
+    reader.readAsDataURL(file);
+  });
+
+const saveUserReferences = (items) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+};
+
+const saveDeletedBaseCardIds = (ids) => {
+  localStorage.setItem(DELETED_BASE_KEY, JSON.stringify([...ids]));
+};
+
+const saveCardOrderMap = (orderMap) => {
+  localStorage.setItem(ORDER_KEY, JSON.stringify(orderMap));
+};
+
+const loadUserReferences = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter((entry) => {
+      return (
+        entry &&
+        typeof entry.name === "string" &&
+        typeof entry.url === "string" &&
+        GROUP_IDS.includes(entry.groupId)
+      );
+    });
+  } catch {
+    return [];
+  }
+};
+
+const loadDeletedBaseCardIds = () => {
+  try {
+    const raw = localStorage.getItem(DELETED_BASE_KEY);
+    if (!raw) return new Set();
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.filter((id) => typeof id === "string"));
+  } catch {
+    return new Set();
+  }
+};
+
+const loadCardOrderMap = () => {
+  try {
+    const raw = localStorage.getItem(ORDER_KEY);
+    if (!raw) return {};
+
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+
+    return GROUP_IDS.reduce((acc, groupId) => {
+      const list = parsed[groupId];
+      acc[groupId] = Array.isArray(list) ? list.filter((id) => typeof id === "string") : [];
+      return acc;
+    }, {});
+  } catch {
+    return {};
+  }
+};
 
 (() => {
   const ua = navigator.userAgent.toLowerCase();
@@ -173,33 +281,56 @@ const getPreviewUrl = (url) => `https://image.thum.io/get/width/900/noanimate/${
   }
 })();
 
-const renderCard = (item, index, groupIndex) => {
+const renderCard = (item, index, groupIndex, meta = {}) => {
+  const shell = document.createElement("div");
+  shell.className = "card-shell";
+  const cardId = String(meta.cardId || item.id || "");
+  const isUserCard = item.badge === "USER" && Boolean(item.id);
   const article = document.createElement("a");
   article.className = "card";
   article.href = item.url;
   article.target = "_blank";
   article.rel = "noopener noreferrer";
   article.setAttribute("aria-label", `${item.name} 사이트 열기`);
+  if (cardId) shell.dataset.cardId = cardId;
+  if (isUserCard) {
+    shell.dataset.userId = item.id;
+  }
 
   const previewSrc = item.image || getPreviewUrl(item.url);
   const isPriorityCard = groupIndex === 0 && index === 0;
   const loadingMode = isPriorityCard ? "eager" : "lazy";
   const fetchPriority = isPriorityCard ? "high" : "auto";
-  const tags = item.tags.map((tag) => `<li class="tag">${tag}</li>`).join("");
-  const badgeClass = item.badge === "HOT" ? "context-hot" : item.badge === "NEW" ? "context-new" : "";
-  const badgeMarkup = item.badge ? `<span class="context ${badgeClass}">${item.badge}</span>` : "";
+  const tags = (Array.isArray(item.tags) ? item.tags : [])
+    .map((tag) => `<li class="tag">${escapeHtml(tag)}</li>`)
+    .join("");
+  const badgeClass =
+    item.badge === "HOT"
+      ? "context-hot"
+      : item.badge === "NEW"
+        ? "context-new"
+        : item.badge === "USER"
+          ? "context-user"
+          : "";
+  const badgeMarkup = item.badge
+    ? `<span class="context ${badgeClass}">${escapeHtml(item.badge)}</span>`
+    : "";
+  const safeName = escapeHtml(item.name || "Untitled");
+  const hasDescription = Boolean(String(item.description || "").trim());
+  const safeDescription = hasDescription ? escapeHtml(item.description) : "";
+  const descriptionMarkup = hasDescription ? `<p class="desc">${safeDescription}</p>` : "";
 
   article.innerHTML = `
     <div class="thumb-wrap">
-      <img class="thumb" src="${previewSrc}" alt="${item.name} 미리보기 이미지" loading="${loadingMode}" fetchpriority="${fetchPriority}" decoding="async" referrerpolicy="no-referrer" />
+      <img class="thumb" src="${previewSrc}" alt="${safeName} 미리보기 이미지" loading="${loadingMode}" fetchpriority="${fetchPriority}" decoding="async" referrerpolicy="no-referrer" />
       <div class="thumb-fallback">미리보기 이미지</div>
     </div>
     <div class="card-body">
       <div class="card-head">
-        <strong class="site-name">${item.name}</strong>
+        <strong class="site-name">${safeName}</strong>
         ${badgeMarkup}
       </div>
-      <p class="desc">${item.description}</p>
+      ${descriptionMarkup}
       <ul class="tags">${tags}</ul>
     </div>
   `;
@@ -209,21 +340,56 @@ const renderCard = (item, index, groupIndex) => {
     article.classList.add("image-error");
   });
 
-  return article;
+  shell.appendChild(article);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "card-delete-btn";
+  deleteButton.setAttribute("aria-label", `${item.name} 삭제`);
+  deleteButton.innerHTML = '<span aria-hidden="true">🗑</span>';
+  shell.appendChild(deleteButton);
+
+  const dragButton = document.createElement("button");
+  dragButton.type = "button";
+  dragButton.className = "card-drag-btn";
+  dragButton.setAttribute("aria-label", `${item.name} 순서 이동`);
+  dragButton.innerHTML = '<span aria-hidden="true">≡</span>';
+  shell.appendChild(dragButton);
+
+  return shell;
 };
 
-Object.entries(groups).forEach(([targetId, items], groupIndex) => {
+const appendCardToGroup = (targetId, item, itemIndex, meta = {}) => {
   const container = document.getElementById(targetId);
   if (!container) return;
 
-  items.forEach((item, index) => {
-    container.appendChild(renderCard(item, index, groupIndex));
+  const groupIndex = GROUP_INDEX[targetId] ?? 0;
+  container.appendChild(renderCard(item, itemIndex, groupIndex, meta));
+};
+
+const getBaseCardId = (groupId, itemIndex) => `base:${groupId}:${itemIndex}`;
+
+const renderInitialCards = (deletedBaseCardIds) => {
+  Object.entries(groups).forEach(([targetId, items], groupIndex) => {
+    const container = document.getElementById(targetId);
+    if (!container) return;
+
+    items.forEach((item, index) => {
+      const cardId = getBaseCardId(targetId, index);
+      if (deletedBaseCardIds.has(cardId)) return;
+      container.appendChild(renderCard(item, index, groupIndex, { cardId }));
+    });
   });
-});
+};
 
 const setupSliderNav = () => {
   const wraps = document.querySelectorAll(".slider-wrap");
   wraps.forEach((wrap) => {
+    if (wrap.dataset.sliderReady === "true") {
+      if (typeof wrap.__updateSlider === "function") wrap.__updateSlider();
+      return;
+    }
+
     const scroller = wrap.querySelector(".cards");
     const prev = wrap.querySelector(".nav-prev");
     const next = wrap.querySelector(".nav-next");
@@ -257,8 +423,341 @@ const setupSliderNav = () => {
 
     scroller.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
+
+    wrap.__updateSlider = update;
+    wrap.dataset.sliderReady = "true";
     update();
   });
 };
 
-setupSliderNav();
+const collectCardOrderMap = () =>
+  GROUP_IDS.reduce((acc, groupId) => {
+    const container = document.getElementById(groupId);
+    if (!container) {
+      acc[groupId] = [];
+      return acc;
+    }
+    const ids = Array.from(container.querySelectorAll(".card-shell"))
+      .map((shell) => shell.dataset.cardId)
+      .filter(Boolean);
+    acc[groupId] = ids;
+    return acc;
+  }, {});
+
+const saveCurrentCardOrder = () => {
+  saveCardOrderMap(collectCardOrderMap());
+};
+
+const applySavedOrder = (orderMap) => {
+  GROUP_IDS.forEach((groupId) => {
+    const container = document.getElementById(groupId);
+    if (!container) return;
+
+    const cardMap = new Map(
+      Array.from(container.querySelectorAll(".card-shell")).map((shell) => [shell.dataset.cardId, shell])
+    );
+    const orderedIds = Array.isArray(orderMap[groupId]) ? orderMap[groupId] : [];
+
+    orderedIds.forEach((id) => {
+      const shell = cardMap.get(id);
+      if (shell) {
+        container.appendChild(shell);
+        cardMap.delete(id);
+      }
+    });
+
+    cardMap.forEach((shell) => {
+      container.appendChild(shell);
+    });
+  });
+};
+
+const updateStatus = (statusEl, message, mode) => {
+  statusEl.textContent = message;
+  statusEl.classList.remove("is-error", "is-success");
+  if (mode === "error") statusEl.classList.add("is-error");
+  if (mode === "success") statusEl.classList.add("is-success");
+};
+
+const setupReferenceForm = (userReferences) => {
+  const modal = document.getElementById("reference-modal");
+  const modalTitle = document.getElementById("reference-modal-title");
+  const closeButton = document.getElementById("reference-modal-close");
+  const openButtons = Array.from(document.querySelectorAll("[data-add-reference]"));
+  const form = document.getElementById("reference-form");
+  const status = document.getElementById("form-status");
+  if (!modal || !modalTitle || !closeButton || openButtons.length === 0 || !form || !status) return;
+
+  const nameInput = form.elements.name;
+  const imageInput = form.elements.imageFile;
+  const clearStatus = () => updateStatus(status, "", null);
+  let activeGroupId = "";
+  let activeCategoryLabel = "";
+
+  const openModal = (groupId) => {
+    if (!GROUP_IDS.includes(groupId)) return;
+    activeGroupId = groupId;
+    modalTitle.textContent = activeCategoryLabel ? `${activeCategoryLabel} 레퍼런스 추가` : "레퍼런스 추가";
+    form.reset();
+    clearStatus();
+    modal.hidden = false;
+    requestAnimationFrame(() => {
+      if (nameInput) nameInput.focus();
+    });
+  };
+
+  const closeModal = () => {
+    modal.hidden = true;
+    clearStatus();
+  };
+
+  openButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      activeCategoryLabel = String(button.dataset.categoryLabel || "").trim();
+      openModal(button.dataset.category || "");
+    });
+  });
+
+  closeButton.addEventListener("click", closeModal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !modal.hidden) closeModal();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const name = String(formData.get("name") || "").trim();
+    const rawUrl = String(formData.get("url") || "").trim();
+    const description = String(formData.get("description") || "").trim();
+    const rawTags = String(formData.get("tags") || "").trim();
+    const groupId = activeGroupId;
+    const imageFile = imageInput && imageInput.files ? imageInput.files[0] : null;
+
+    if (!name || !rawUrl || !GROUP_IDS.includes(groupId)) {
+      updateStatus(status, "이름과 URL을 확인해 주세요.", "error");
+      return;
+    }
+
+    const normalizedUrl = normalizeUrl(rawUrl);
+    if (!normalizedUrl) {
+      updateStatus(status, "유효한 URL을 입력해 주세요.", "error");
+      return;
+    }
+
+    let image;
+    if (imageFile) {
+      if (!imageFile.type.startsWith("image/")) {
+        updateStatus(status, "이미지 파일만 업로드할 수 있습니다.", "error");
+        return;
+      }
+      try {
+        image = await readImageFileAsDataUrl(imageFile);
+      } catch {
+        updateStatus(status, "이미지 파일을 읽지 못했습니다. 다시 시도해 주세요.", "error");
+        return;
+      }
+    }
+
+    const card = {
+      name,
+      url: normalizedUrl,
+      description,
+      tags: toTagList(rawTags),
+      badge: "USER",
+      ...(image ? { image } : {}),
+    };
+
+    const record = {
+      ...card,
+      groupId,
+      id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    userReferences.push(record);
+    saveUserReferences(userReferences);
+
+    const targetContainer = document.getElementById(groupId);
+    const itemIndex = targetContainer ? targetContainer.querySelectorAll(".card").length : 0;
+    appendCardToGroup(groupId, record, itemIndex, { cardId: `user:${record.id}` });
+    setupSliderNav();
+
+    const selectedCategory = groupId;
+    form.reset();
+    activeGroupId = selectedCategory;
+
+    updateStatus(status, `"${name}" 레퍼런스를 추가했습니다.`, "success");
+    setTimeout(() => {
+      closeModal();
+    }, 380);
+  });
+};
+
+const setupCardDeletion = (userReferences, deletedBaseCardIds) => {
+  document.addEventListener("click", (event) => {
+    const deleteButton = event.target.closest(".card-delete-btn");
+    if (!deleteButton) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const shell = deleteButton.closest(".card-shell");
+    if (!shell) return;
+
+    const userId = String(shell.dataset.userId || "");
+    const cardId = String(shell.dataset.cardId || "");
+
+    if (userId) {
+      const index = userReferences.findIndex((item) => item.id === userId);
+      if (index >= 0) {
+        const target = userReferences[index];
+        const shouldDelete = window.confirm(`"${target.name}" 레퍼런스를 삭제할까요?`);
+        if (!shouldDelete) return;
+        userReferences.splice(index, 1);
+        saveUserReferences(userReferences);
+      }
+    } else if (cardId.startsWith("base:")) {
+      const shouldDelete = window.confirm("기본 레퍼런스를 내 화면에서 삭제할까요?");
+      if (!shouldDelete) return;
+      deletedBaseCardIds.add(cardId);
+      saveDeletedBaseCardIds(deletedBaseCardIds);
+    } else {
+      return;
+    }
+
+    shell.remove();
+    saveCurrentCardOrder();
+    setupSliderNav();
+  });
+};
+
+const getDragAfterElement = (container, pointerX) => {
+  const items = [...container.querySelectorAll(".card-shell:not(.is-dragging)")];
+  return items.reduce(
+    (closest, item) => {
+      const box = item.getBoundingClientRect();
+      const offset = pointerX - box.left - box.width / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset, element: item };
+      }
+      return closest;
+    },
+    { offset: Number.NEGATIVE_INFINITY, element: null }
+  ).element;
+};
+
+const setupCardSorting = () => {
+  const containers = Array.from(document.querySelectorAll(".cards"));
+  let draggingShell = null;
+  let dragContainer = null;
+  let armedShell = null;
+
+  document.addEventListener("pointerdown", (event) => {
+    const handle = event.target.closest(".card-drag-btn");
+    if (!handle) {
+      if (!draggingShell && armedShell) {
+        armedShell.draggable = false;
+        armedShell.dataset.dragReady = "false";
+        armedShell = null;
+      }
+      return;
+    }
+
+    const shell = handle.closest(".card-shell");
+    if (!shell) return;
+
+    if (armedShell && armedShell !== shell) {
+      armedShell.draggable = false;
+      armedShell.dataset.dragReady = "false";
+    }
+
+    shell.draggable = true;
+    shell.dataset.dragReady = "true";
+    armedShell = shell;
+  });
+
+  document.addEventListener("pointerup", () => {
+    if (draggingShell || !armedShell) return;
+    armedShell.draggable = false;
+    armedShell.dataset.dragReady = "false";
+    armedShell = null;
+  });
+
+  containers.forEach((container) => {
+    container.addEventListener("dragstart", (event) => {
+      const shell = event.target.closest(".card-shell");
+      if (!shell || shell.dataset.dragReady !== "true") {
+        event.preventDefault();
+        return;
+      }
+
+      draggingShell = shell;
+      dragContainer = container;
+      shell.classList.add("is-dragging");
+      container.classList.add("is-dragging-list");
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", shell.dataset.cardId || "");
+      }
+    });
+
+    container.addEventListener("dragover", (event) => {
+      if (!draggingShell || dragContainer !== container) return;
+      event.preventDefault();
+      const afterElement = getDragAfterElement(container, event.clientX);
+      if (!afterElement) {
+        container.appendChild(draggingShell);
+      } else {
+        container.insertBefore(draggingShell, afterElement);
+      }
+    });
+
+    container.addEventListener("drop", (event) => {
+      if (!draggingShell || dragContainer !== container) return;
+      event.preventDefault();
+      saveCurrentCardOrder();
+      setupSliderNav();
+    });
+
+    container.addEventListener("dragend", () => {
+      if (!draggingShell) return;
+      draggingShell.classList.remove("is-dragging");
+      draggingShell.draggable = false;
+      draggingShell.dataset.dragReady = "false";
+      if (dragContainer) dragContainer.classList.remove("is-dragging-list");
+      if (armedShell === draggingShell) armedShell = null;
+      draggingShell = null;
+      dragContainer = null;
+      saveCurrentCardOrder();
+      setupSliderNav();
+    });
+  });
+};
+
+const init = () => {
+  const userReferences = loadUserReferences();
+  const deletedBaseCardIds = loadDeletedBaseCardIds();
+  const savedOrderMap = loadCardOrderMap();
+
+  renderInitialCards(deletedBaseCardIds);
+  userReferences.forEach((item) => {
+    const groupId = item.groupId;
+    if (!GROUP_IDS.includes(groupId)) return;
+
+    const targetContainer = document.getElementById(groupId);
+    const itemIndex = targetContainer ? targetContainer.querySelectorAll(".card").length : 0;
+    appendCardToGroup(groupId, item, itemIndex, { cardId: `user:${item.id}` });
+  });
+
+  applySavedOrder(savedOrderMap);
+  setupSliderNav();
+  setupReferenceForm(userReferences);
+  setupCardDeletion(userReferences, deletedBaseCardIds);
+  setupCardSorting();
+};
+
+init();

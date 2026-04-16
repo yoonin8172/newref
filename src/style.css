@@ -55,14 +55,160 @@ body {
   margin-top: 48px;
 }
 
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 2px solid #e2e4e8;
+  padding-top: 10px;
+  margin-bottom: 18px;
+}
+
 .section-title {
   font-size: 16px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 18px;
   color: #5f636b;
-  border-top: 2px solid #e2e4e8;
-  padding-top: 10px;
+}
+
+.add-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #c9d7f7;
+  border-radius: 999px;
+  background: #f1f6ff;
+  color: #2751a5;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.add-icon-btn:hover {
+  background: #e6efff;
+  border-color: #aac1f3;
+  transform: translateY(-1px);
+}
+
+.add-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  border: 1px solid var(--line);
+  background: #fbfdff;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(9, 17, 30, 0.42);
+  padding: 20px;
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal-panel {
+  width: min(840px, 100%);
+  max-height: 86vh;
+  overflow: auto;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #d6e2fb;
+  box-shadow: 0 14px 32px rgba(19, 43, 83, 0.24);
+  padding: 18px;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.modal-title {
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: #1d3764;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid #d6def0;
+  background: #f8fafe;
+  color: #495a76;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.add-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: #4b6288;
+  font-weight: 600;
+}
+
+.add-form input,
+.add-form select {
+  width: 100%;
+  border: 1px solid #cfe0ff;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1e3359;
+  font-size: 14px;
+  padding: 10px 12px;
+}
+
+.add-form input:focus,
+.add-form select:focus {
+  outline: none;
+  border-color: #79aaf5;
+  box-shadow: 0 0 0 3px rgba(43, 134, 234, 0.12);
+}
+
+.add-btn {
+  border: 1px solid #1d5fe3;
+  background: #1d5fe3;
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.add-btn:hover {
+  filter: brightness(1.05);
+}
+
+.form-status {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #4b6288;
+}
+
+.form-status.is-error {
+  color: #b3261e;
+}
+
+.form-status.is-success {
+  color: #0a7a34;
 }
 
 .slider-wrap {
@@ -86,6 +232,8 @@ body {
   --peek: 96px;
   display: flex;
   gap: 18px;
+  padding-top: 6px;
+  margin-top: -6px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
@@ -171,7 +319,8 @@ body {
 .card {
   position: relative;
   display: block;
-  flex: 0 0 var(--card-width);
+  width: 100%;
+  height: 100%;
   scroll-snap-align: start;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -183,11 +332,93 @@ body {
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-.card:hover,
-.card:focus-within {
+.card-shell {
+  position: relative;
+  flex: 0 0 var(--card-width);
+  display: flex;
+}
+
+.card-delete-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(22, 39, 74, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(41, 73, 120, 0.62);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.22s ease;
+}
+
+.card-delete-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(22, 39, 74, 0.24);
+  color: rgba(41, 73, 120, 0.9);
+}
+
+.card-drag-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 38px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(22, 39, 74, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(41, 73, 120, 0.62);
+  font-size: 14px;
+  line-height: 1;
+  cursor: grab;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.22s ease;
+}
+
+.card-drag-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(22, 39, 74, 0.24);
+  color: rgba(41, 73, 120, 0.9);
+}
+
+.card-shell.is-dragging .card-drag-btn {
+  cursor: grabbing;
+}
+
+.card-shell.is-dragging {
+  opacity: 0.75;
+}
+
+.card-shell:hover .card,
+.card-shell:focus-within .card {
   transform: translateY(-3px);
   border-color: var(--line-strong);
   box-shadow: 0 8px 18px rgba(17, 58, 130, 0.1);
+}
+
+.card-shell:hover .card-delete-btn,
+.card-shell:focus-within .card-delete-btn {
+  transform: translateY(-3px);
+}
+
+.card-shell:hover .card-drag-btn,
+.card-shell:focus-within .card-drag-btn {
+  transform: translateY(-3px);
 }
 
 .thumb-wrap {
@@ -229,6 +460,9 @@ body {
 
 .card-body {
   padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 140px;
 }
 
 .card-head {
@@ -274,6 +508,12 @@ body {
   color: #9a6b00;
 }
 
+.context-user {
+  border: 1px solid #b6c9f8;
+  background: #f1f6ff;
+  color: #2751a5;
+}
+
 .desc {
   font-size: 13px;
   line-height: 1.55;
@@ -287,6 +527,7 @@ body {
   flex-wrap: wrap;
   gap: 7px;
   list-style: none;
+  margin-top: auto;
 }
 
 .tag {
@@ -325,6 +566,14 @@ body {
     --peek: 24px;
     --card-width: min(84vw, 320px);
     scroll-snap-type: x proximity;
+  }
+
+  .add-form {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-panel {
+    padding: 14px;
   }
 
   .slider-wrap::after {
